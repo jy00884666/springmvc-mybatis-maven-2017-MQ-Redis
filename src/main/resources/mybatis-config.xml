@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE configuration PUBLIC 
+	"-//ibatis.apache.org//DTD Config 3.0//EN" 
+	"http://ibatis.apache.org/dtd/ibatis-3-config.dtd">
+
+<configuration>
+
+	<settings>
+		<!-- 打印查询语句 -->
+		<!-- mybatis的日志打印方式比较多，SLF4J | LOG4J | LOG4J2 | JDK_LOGGING | COMMONS_LOGGING 
+			| STDOUT_LOGGING | NO_LOGGING，可以根据自己的需要进行配置 -->
+		<setting name="logImpl" value="slf4j" />
+		<!-- 缓存_全局开关：默认是true，如果它配成false，其余各个Mapper XML文件配成支持cache也没用 -->
+		<setting name="cacheEnabled" value="false" />
+		<!-- 配置默认的执行器，SIMPLE 没有特别用处。REUSE 执行器可能重用预处理语句，BATCH执行器可以重用语句和批量更新 -->
+		<setting name="defaultExecutorType" value="REUSE" />
+		<!-- 是否开启自动驼峰命名规则（camel case）映射，即从经典数据库列名 A_COLUMN 到经典 Java 属性名 aColumn 
+			的类似映射。 -->
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+	</settings>
+
+	<!-- 分页插件 -->
+	<plugins>
+		<plugin interceptor="sy.page.PageHelper">
+			<property name="dialect" value="oracle" />
+		</plugin>
+	</plugins>
+
+
+
+</configuration>

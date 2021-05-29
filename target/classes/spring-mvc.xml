@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding= "UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- 注解:SpringMVC注解代替手动配置:如@Controller注解,即解决了@Controller注解的使用前提配置 -->
+	<mvc:annotation-driven />
+
+	<!-- 注解:Spring容器注解:如使用@Autowired注解 -->
+	<context:annotation-config />
+
+	<!-- 自定义扫描的包路径 -->
+	<!-- 该配置项其实也包含了自动注入上述processor的功能，因此当使用 <context:component-scan/> 后，就可以将 <context:annotation-config/> 移除了 -->
+	<context:component-scan base-package="sy.controller" />
+
+	<!-- 避免IE执行ajax时,返回json出现下载文件 -->
+	<bean id="mappingJacksonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- mappingJacksonHttpMessageConverter ： 用来处理json格式转换 -->
+	<!-- 启动Spring MVC的注解功能,完成请求和注解POJO的映射 -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="mappingJacksonHttpMessageConverter" /><!-- JSON转换器 -->
+			</list>
+		</property>
+	</bean>
+
+	<!-- 使用InternalResourceViewResolver视图解析器进行视图的解析,即在模型试图名称添加前后缀 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!-- 配置试图解析器: 如何把handler方法返回值解析为实际的物理试图 prefix前缀 + 返回值 + suffix后缀 -->
+		<property name="prefix" value="/WEB-INF/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- 文件上传配置 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 默认编码 (ISO-8859-1) -->
+		<property name="defaultEncoding" value="UTF-8" />
+		<!-- 文件上传大小31M,31*1024*1024; -1表示无限制 -->
+		<property name="maxUploadSize" value="32505856" />
+		<!-- 最大内存大小 -->
+		<property name="maxInMemorySize" value="4096" />
+	</bean>
+
+	<!-- 配置资源过滤:对静态资源文件的访问 -->
+	<mvc:default-servlet-handler />
+	<!-- 这样配置后，SpringMVC会将所有的页面引用到/js/**的资源都从/js/里面进行查找 -->
+	<mvc:resources mapping="/images/**" location="/images/" cache-period="31556926" /><!-- cache-period缓存 -->
+	<mvc:resources mapping="/js/**" location="/js/" cache-period="31556926" />
+	<mvc:resources mapping="/css/**" location="/css/" cache-period="31556926" />
+
+	<!-- shashijie 2017-01-20 拦截器配置 -->
+	<mvc:interceptors>
+		<!-- 使用bean定义一个Interceptor，直接定义在mvc:interceptors根下面的Interceptor将拦截所有的请求 -->
+		<!-- <bean class="sy.interceptor.TextInterceptor" /> -->
+		<mvc:interceptor>
+			<!-- 定义在mvc:interceptor下面的表示是对特定的请求才进行拦截的:"**"表示子路径也拦截 -->
+			<mvc:mapping path="/**Controller/**" />
+			<bean class="sy.interceptor.TextInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+</beans>
