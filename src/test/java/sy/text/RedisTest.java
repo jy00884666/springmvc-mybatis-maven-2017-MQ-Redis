@@ -3,28 +3,37 @@
  *
  * Copyright shashijie
  *
- * modified by <date> 2017-02-02 <user>shashijie <description> 
+ * modified by <date> 2017-02-02 <user>shashijie <description>
  */
 package sy.text;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
+import sy.controller.TextController;
 
-/**Redis测试
+import java.util.Arrays;
+
+/**
+ * Redis测试
+ * @author shashijie
  * @description:
  * @reason: ADD REASON(可选)
- * @author shashijie
  * @date 2017-02-02
  * @since JDK 1.7
  */
 public class RedisTest {
-
-    /**shashijie 2017-02-02 ALM-
+    
+    private final static Logger logger = LoggerFactory.getLogger(TextController.class);
+    
+    /**
+     * shashijie 2017-02-02 ALM-
      * @param args void
      */
     public static void main(String[] args) {
         Jedis jedis = null;
         try {
-            jedis = new Jedis("192.168.56.102",6379);
+            jedis = new Jedis("192.168.56.102", 6379);
             System.out.println(jedis.ping());
             
             // 添加
@@ -34,13 +43,13 @@ public class RedisTest {
             System.out.println(jedis.get("001"));
             
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.info(Arrays.toString(e.getStackTrace()), e);
         } finally {
             if (jedis != null) {
                 jedis.close();
             }
         }
-
+        
     }
-
+    
 }
