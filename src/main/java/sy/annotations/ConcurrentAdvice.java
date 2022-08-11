@@ -7,11 +7,6 @@
 
 package sy.annotations;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.lang.StringUtils;
@@ -19,19 +14,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sy.exception.BusinessException;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
- * @description: 并发控制切面,继承方法拦截器MethodInterceptor
- * @reason: ADD REASON(可选)
  * @author shashijie
+ * @description: 并发控制切面, 继承方法拦截器MethodInterceptor
+ * @reason: ADD REASON(可选)
  * @date 2017-01-25
  * @since JDK 1.7
  */
 public class ConcurrentAdvice implements MethodInterceptor {
-
+    
     private Map<String, AtomicBoolean> isRunMap = new HashMap<String, AtomicBoolean>();
-
+    
     private static final Logger logger = LoggerFactory.getLogger(ConcurrentAdvice.class);
-
+    
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         logger.debug("进入并发控制切面");
@@ -40,7 +41,7 @@ public class ConcurrentAdvice implements MethodInterceptor {
         // 获取方法(接口)上的Sync注解,若无返回null
         Sync annotation = methodInvocation.getMethod().getAnnotation(Sync.class);
         if (annotation != null) {
-            // 通过算法获取key
+            // 通过算法获取key,默认用类名+"."+方法全路径声明
             String key = generateKey(annotation, methodInvocation);
             logger.debug("需要进行并发控制,key={}", key);
             isRun = isRunMap.get(key);
@@ -68,7 +69,7 @@ public class ConcurrentAdvice implements MethodInterceptor {
                 throw new BusinessException("业务异常", "不能并发执行该方法！");
             }
         }
-
+        
         try {
             // 执行该方法
             return methodInvocation.proceed();
@@ -77,11 +78,11 @@ public class ConcurrentAdvice implements MethodInterceptor {
                 isRun.set(false);
             }
         }
-
+        
     }
-
+    
     /**
-     * shashijie 2017-01-25 获取key
+     * shashijie 2017-01-25 获取key,默认用类名+"."+方法全路径声明
      * @param annotation
      * @param methodInvocation
      * @return
@@ -124,7 +125,7 @@ public class ConcurrentAdvice implements MethodInterceptor {
         }
         return key;
     }
-
+    
     /**
      * shashijie 2017-01-25 加密方法
      * @param str
@@ -142,5 +143,5 @@ public class ConcurrentAdvice implements MethodInterceptor {
         }
         return sb.toString();
     }
-
+    
 }
