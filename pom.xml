@@ -110,7 +110,7 @@
             <artifactId>ojdbc6</artifactId>
             <version>11.2.0.1.0</version>
         </dependency>
-        <!-- 连接池德鲁伊 -->
+        <!-- 连接池druid德鲁伊 -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
