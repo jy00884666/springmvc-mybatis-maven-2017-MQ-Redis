@@ -183,6 +183,24 @@
         <plugins>
         
         </plugins>
+        
+        <!-- eclipse会自动把项目src\main\java\目录下的配置文件（.xml）和资源文件(.properties)搬运到target目录下，而IDEA默认是不会帮我们做这件事的。
+                解决方法:
+                    在pom文件中<build>标签下添加如下依赖
+                建议:
+                    一般不建议将xml文件放在src/main/java目录下，一般将其放在resources目录下就不会有这个问题啦。需要在application.yml文件中加入mapper配置
+        -->
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+        
     </build>
     <!-- 添加指定的中央仓库 -->
     <repositories>
